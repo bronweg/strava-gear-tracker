@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Add Equipment - Bike Equipment Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Equipment</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_equipment') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Equipment Name *</label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               placeholder="e.g., Front Tire, Chain, Cassette" required>
+                        <div class="form-text">Give your equipment a descriptive name</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="equipment_type" class="form-label">Equipment Type</label>
+                        <select class="form-select" id="equipment_type" name="equipment_type">
+                            <option value="">Select type (optional)</option>
+                            <option value="Chain">Chain</option>
+                            <option value="Cassette">Cassette</option>
+                            <option value="Tires">Tires</option>
+                            <option value="Front Tire">Front Tire</option>
+                            <option value="Rear Tire">Rear Tire</option>
+                            <option value="Brake Pads">Brake Pads</option>
+                            <option value="Cables">Cables</option>
+                            <option value="Bottom Bracket">Bottom Bracket</option>
+                            <option value="Pedals">Pedals</option>
+                            <option value="Saddle">Saddle</option>
+                            <option value="Handlebar Tape">Handlebar Tape</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="installation_date" class="form-label">Installation Date *</label>
+                        <input type="date" class="form-control" id="installation_date"
+                               name="installation_date" required max="{{ today }}">
+                        <div class="form-text">When did you install this equipment?</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="strava_bike_id" class="form-label">Associated Bike</label>
+                        <select class="form-select" id="strava_bike_id" name="strava_bike_id">
+                            <option value="">All bikes (not bike-specific)</option>
+                            {% for bike in bikes %}
+                            <option value="{{ bike.strava_gear_id }}">{{ bike.display_name() }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            Select a specific bike to track this equipment for that bike only.
+                            Leave as "All bikes" for equipment used across multiple bikes.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"
+                                  placeholder="Any additional information..."></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Add Equipment
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-info-circle"></i> How it works</h6>
+                <p class="card-text small text-muted">
+                    Once you add equipment, the app will automatically fetch your outdoor Strava rides
+                    (Ride and EBikeRide activities) from the installation date until today and calculate
+                    the total distance and time you've ridden with this equipment. Virtual/indoor rides
+                    are excluded since they don't cause wear on outdoor bicycle components.
+                </p>
+                <p class="card-text small text-muted">
+                    <strong>Bike-Specific Tracking:</strong> If you select a specific bike, only activities
+                    recorded with that bike will be counted. This is useful for bike-specific components like
+                    chains, cassettes, or tires. For equipment used across multiple bikes (like pedals or a
+                    saddle), leave the bike selection as "All bikes".
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set max date to today
+    document.getElementById('installation_date').max = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}
+
